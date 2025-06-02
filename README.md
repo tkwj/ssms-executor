@@ -6,19 +6,13 @@ If your script contains multiple statements, position the cursor within the desi
 
 # Documentation
 
-[Getting started guide](https://github.com/devvcat/ssms-executor/wiki)
+[Getting started guide](https://github.com/tkwj/ssms-executor/wiki)
 
-[Known issues with workarounds](https://github.com/devvcat/ssms-executor/wiki/Known-issues)
-
-[Release notes for released versions and daily builds](https://github.com/devvcat/ssms-executor/wiki/Release-notes)
+[Release notes for released versions and other builds](https://github.com/tkwj/ssms-executor/wiki/Release-notes)
 
 # Downloads/builds
 
-## SQL Server Management Studio (SSMS) 16.x, 17.x and 18.x Extension
+## SQL Server Management Studio (SSMS) 21.x Extension
 
-You can download the extension from the [Releases section](https://github.com/devvcat/ssms-executor/releases)
-
-
-## SQL Server Management Studio (SSMS) 2012 AddIn
-
-You can download the addin from the [Releases section](https://github.com/devvcat/ssms-executor/releases)
+You can download the extension from the [Releases section](https://github.com/tkwj/ssms-executor/releases)
+or build it yourself using the provided source code.
