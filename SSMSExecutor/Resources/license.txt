@@ -1,2 +1,2 @@
 
-For license, see https://github.com/devvcat/ssms-executor/LICENSE
+For license, see https://github.com/tkwj/ssms-executor/LICENSE
