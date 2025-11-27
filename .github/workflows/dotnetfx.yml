@@ -1,0 +1,26 @@
+name: Build and Test .NET Framework App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1.0.5
+
+    - name: Restore Packages
+      run: nuget restore SSMSExecutor.sln
+
+    - name: Build Solution
+      run: msbuild.exe SSMSExecutor.sln /p:platform="Any CPU" /p:configuration="Release"
