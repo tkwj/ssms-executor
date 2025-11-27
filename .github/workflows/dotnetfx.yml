@@ -1,10 +1,7 @@
 name: Build and Test .NET Framework App
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
