@@ -20,4 +20,12 @@ jobs:
       run: nuget restore SSMSExecutor.sln
 
     - name: Build Solution
-      run: msbuild.exe SSMSExecutor.sln /p:platform="Any CPU" /p:configuration="Release"
+      run: msbuild.exe SSMSExecutor.sln /property:Configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
+
+    - name: Publish artifacts
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
+      uses: actions/upload-artifact@v5
+      with:
+        name: Artifacts
+        path: |
+          *.vsix
