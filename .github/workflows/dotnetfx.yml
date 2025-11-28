@@ -9,9 +9,6 @@ on:
     branches:
       - '*'
 
-permissions:
-  id-token: write
-
 env:
   VERSION: 3.1.${{ github.run_number }}
   
@@ -33,16 +30,26 @@ jobs:
 
     - name: Build Solution
       run: msbuild.exe SSMSExecutor.sln /property:Configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
-
-    - name: Azure CLI login with federated credential
+    
+    - name: Move build output
+      if: github.ref == 'refs/heads/main' && github.repository_owner == 'erikej' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
+      run: |
+        mv SSMSExecutor/bin/Release/SSMSExecutor.vsix SSMSExecutor-${{ env.VERSION }}.vsix
+        
+    - name: Azure CLI login
       if: github.event_name != 'pull_request'
       uses: azure/login@v2
       with:
         creds: ${{ secrets.AZURE_CREDS }}
+
+    - name: Install dotnet sign
+      if: github.event_name != 'pull_request'
+      run: dotnet tool install --global sign --prerelease
 
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
       uses: actions/upload-artifact@v5
       with:
         name: Artifacts
-        path: SSMSExecutor/bin/Release/*.vsix
+        path: |
+          *.vsix
