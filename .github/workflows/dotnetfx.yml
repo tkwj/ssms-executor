@@ -32,7 +32,7 @@ jobs:
       run: msbuild.exe SSMSExecutor.sln /property:Configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
     
     - name: Move build output
-      if: github.ref == 'refs/heads/main' && github.repository_owner == 'erikej' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
       run: |
         mv SSMSExecutor/bin/Release/SSMSExecutor.vsix SSMSExecutor-${{ env.VERSION }}.vsix
         
