@@ -27,5 +27,4 @@ jobs:
       uses: actions/upload-artifact@v5
       with:
         name: Artifacts
-        path: |
-          ssms-executor\ssms-executor\SSMSExecutor\bin\Release\*.vsix
+        path: SSMSExecutor/bin/Release/*.vsix
