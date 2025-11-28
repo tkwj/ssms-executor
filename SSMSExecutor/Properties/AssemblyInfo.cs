@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("SQL Server Management Studio Add-in for executing the current statement, based on the cursor position.")]
 [assembly: AssemblyProduct("SSMS Executor")]
 [assembly: AssemblyCopyright("")]
-[assembly: AssemblyFileVersion("3.0.0.0")]
+[assembly: AssemblyFileVersion("3.1.0.0")]
 [assembly: AssemblyInformationalVersion("3.0-alpha1")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -27,6 +27,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.0.*")]
+[assembly: AssemblyVersion("3.1.0.*")]
 [assembly: AssemblyTrademark("")]
 //[assembly: AssemblyFileVersion("0.1.0.0")]
