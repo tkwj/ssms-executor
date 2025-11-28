@@ -25,8 +25,11 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v2
+
     - name: Restore Packages
-      run: dotnet restore SSMSExecutor.sln
+      run: nuget restore SSMSExecutor.sln
 
     - name: Build Solution
       run: msbuild.exe SSMSExecutor.sln /property:Configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
