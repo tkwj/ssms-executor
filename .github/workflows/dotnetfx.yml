@@ -38,9 +38,7 @@ jobs:
       if: github.event_name != 'pull_request'
       uses: azure/login@v2
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        creds: ${{ secrets.AZURE_CREDS }}
 
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
