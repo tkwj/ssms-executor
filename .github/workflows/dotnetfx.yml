@@ -1,8 +1,20 @@
-name: Build and Test .NET Framework App
+name: Build VSIX
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    branches:
+      - '*'
 
+permissions:
+  id-token: write
+
+env:
+  VERSION: 3.1.${{ github.run_number }}
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -13,11 +25,8 @@ jobs:
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v2
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v2
-
     - name: Restore Packages
-      run: nuget restore SSMSExecutor.sln
+      run: dotnet restore SSMSExecutor.sln
 
     - name: Build Solution
       run: msbuild.exe SSMSExecutor.sln /property:Configuration=Release /p:DeployExtension=false /p:ZipPackageCompressionLevel=normal /v:m
