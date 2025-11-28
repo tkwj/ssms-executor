@@ -28,4 +28,4 @@ jobs:
       with:
         name: Artifacts
         path: |
-          *.vsix
+          ssms-executor\ssms-executor\SSMSExecutor\bin\Release\*.vsix
