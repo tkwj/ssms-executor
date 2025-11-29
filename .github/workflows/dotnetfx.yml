@@ -46,6 +46,14 @@ jobs:
       if: github.event_name != 'pull_request'
       run: dotnet tool install --global sign --prerelease
 
+    - name: Sign VSIX packages
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
+      run: sign code trusted-signing *.vsix `
+        --trusted-signing-account tkwj `
+        --trusted-signing-certificate-profile tkwj-github `
+        --trusted-signing-endpoint https://eus.codesigning.azure.net `
+        --verbosity information
+
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
       uses: actions/upload-artifact@v5
