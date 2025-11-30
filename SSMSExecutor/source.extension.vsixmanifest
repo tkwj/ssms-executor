@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
     <Metadata>
-        <Identity Id="SSMSExecutor.17e8fa63-4183-460e-8840-f8b2293f545c" Version="3.0.0" Language="en-US" Publisher="Tom Willwerth" />
+        <Identity Id="SSMSExecutor.17e8fa63-4183-460e-8840-f8b2293f545c" Version="3.1.0" Language="en-US" Publisher="Tom Willwerth" />
         <DisplayName>SSMS Executor</DisplayName>
         <Description xml:space="preserve">SSMS Executor is a SQL Server Management Studio Add-in for executing the current statement, based on the cursor position.</Description>
         <MoreInfo>https://github.com/tkwj/ssms-executor</MoreInfo>
@@ -12,7 +12,7 @@
         <Tags>ssms</Tags>
     </Metadata>
     <Installation AllUsers="true">
-        <InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[18.0,)">
+        <InstallationTarget Id="Microsoft.VisualStudio.Ssms" Version="[17.0,18.0)">
             <ProductArchitecture>amd64</ProductArchitecture>
         </InstallationTarget>
     </Installation>

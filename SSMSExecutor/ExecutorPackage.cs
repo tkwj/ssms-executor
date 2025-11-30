@@ -1,22 +1,16 @@
-﻿using Devvcat.SSMS.Options;
-using Microsoft.VisualStudio;
+﻿using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Devvcat.SSMS
 {
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
-    [InstalledProductRegistration("#110", "#112", "3.0.0", IconResourceID = 400)] // Info on this package for Help/About
+    [InstalledProductRegistration("#110", "#112", "3.1.0", IconResourceID = 400)] // Info on this package for Help/About
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [ProvideAutoLoad(VSConstants.UICONTEXT.ShellInitialized_string, PackageAutoLoadFlags.BackgroundLoad)]
 #if DEBUG
@@ -28,15 +22,11 @@ namespace Devvcat.SSMS
     {
         private const string PackageGuidString = "a64d9865-b938-4543-bf8f-a553cc4f67f3";
 
-        public ExecutorPackage()
-        {
-        }
-
         protected override async Task InitializeAsync(CancellationToken cancellationToken, IProgress<ServiceProgressData> progress)
         {
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
 
-            base.Initialize();
+            Initialize();
 
             ExecutorCommand.Initialize(this);
         }
@@ -53,10 +43,13 @@ namespace Devvcat.SSMS
             try
             {
                 var registryKey = UserRegistryRoot.CreateSubKey(
-                    string.Format("Packages\\{{{0}}}", PackageGuidString));
+                    $"Packages\\{{{PackageGuidString}}}");
 
-                registryKey.SetValue("SkipLoading", 1, RegistryValueKind.DWord);
-                registryKey.Close();
+                if (registryKey != null)
+                {
+                    registryKey.SetValue("SkipLoading", 1, RegistryValueKind.DWord);
+                    registryKey.Close();
+                }
             }
             catch
             { }

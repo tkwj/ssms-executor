@@ -9,25 +9,25 @@ namespace Devvcat.SSMS
 {
     sealed class Executor
     {
-        public readonly string CMD_QUERY_EXECUTE = "Query.Execute";
+        public readonly string CmdQueryExecute = "Query.Execute";
 
-        private Document document;
+        private readonly Document _document;
 
-        private EditPoint oldAnchor;
-        private EditPoint oldActivePoint;
+        private EditPoint _oldAnchor;
+        private EditPoint _oldActivePoint;
 
         public Executor(DTE2 dte)
         {
             if (dte == null) throw new ArgumentNullException(nameof(dte));
 
-            document = dte.GetDocument();
+            _document = dte.GetDocument();
 
             SaveActiveAndAnchorPoints();
         }
 
         private VirtualPoint GetCaretPoint()
         {
-            var p = ((TextSelection)document.Selection).ActivePoint;
+            var p = ((TextSelection)_document.Selection).ActivePoint;
 
             return new VirtualPoint(p);
         }
@@ -35,7 +35,7 @@ namespace Devvcat.SSMS
         private string GetDocumentText()
         {
             var content = string.Empty;
-            var selection = (TextSelection)document.Selection;
+            var selection = (TextSelection)_document.Selection;
 
             if (!selection.IsEmpty)
             {
@@ -43,7 +43,7 @@ namespace Devvcat.SSMS
             }
             else
             {
-                if (document.Object("TextDocument") is TextDocument doc)
+                if (_document.Object("TextDocument") is TextDocument doc)
                 {
                     content = doc.StartPoint.CreateEditPoint().GetText(doc.EndPoint);
                 }
@@ -54,23 +54,23 @@ namespace Devvcat.SSMS
 
         private void SaveActiveAndAnchorPoints()
         {
-            var selection = (TextSelection)document.Selection;
+            var selection = (TextSelection)_document.Selection;
 
-            oldAnchor = selection.AnchorPoint.CreateEditPoint();
-            oldActivePoint = selection.ActivePoint.CreateEditPoint();
+            _oldAnchor = selection.AnchorPoint.CreateEditPoint();
+            _oldActivePoint = selection.ActivePoint.CreateEditPoint();
         }
 
         private void RestoreActiveAndAnchorPoints()
         {
-            var startPoint = new VirtualPoint(oldAnchor);
-            var endPoint = new VirtualPoint(oldActivePoint);
+            var startPoint = new VirtualPoint(_oldAnchor);
+            var endPoint = new VirtualPoint(_oldActivePoint);
 
             MakeSelection(startPoint, endPoint);
         }
 
         private void MakeSelection(VirtualPoint startPoint, VirtualPoint endPoint)
         {
-            var selection = (TextSelection)document.Selection;
+            var selection = (TextSelection)_document.Selection;
 
             selection.MoveToLineAndOffset(startPoint.Line, startPoint.LineCharOffset);
             selection.SwapAnchor();
@@ -189,14 +189,14 @@ namespace Devvcat.SSMS
 
         private void Exec()
         {
-            document.DTE.ExecuteCommand(CMD_QUERY_EXECUTE);
+            _document.DTE.ExecuteCommand(CmdQueryExecute);
         }
 
         private bool CanExecute()
         {
             try
             {
-                var cmd = document.DTE.Commands.Item(CMD_QUERY_EXECUTE, -1);
+                var cmd = _document.DTE.Commands.Item(CmdQueryExecute);
                 return cmd.IsAvailable;
             }
             catch
@@ -214,7 +214,7 @@ namespace Devvcat.SSMS
 
             SaveActiveAndAnchorPoints();
 
-            if (!(document.Selection as TextSelection).IsEmpty)
+            if (!((TextSelection)_document.Selection).IsEmpty)
             {
                 Exec();
             }
@@ -229,15 +229,16 @@ namespace Devvcat.SSMS
                 {
                     TextBlock currentStatement = null;
 
-                    foreach (var batch in sqlScript?.Batches)
-                    {
-                        currentStatement = FindCurrentStatement(batch.Statements, caretPoint, scope);
-
-                        if (currentStatement != null)
+                    if (sqlScript?.Batches != null)
+                        foreach (var batch in sqlScript.Batches)
                         {
-                            break;
+                            currentStatement = FindCurrentStatement(batch.Statements, caretPoint, scope);
+
+                            if (currentStatement != null)
+                            {
+                                break;
+                            }
                         }
-                    }
 
                     if (currentStatement != null)
                     {
@@ -271,7 +272,7 @@ namespace Devvcat.SSMS
                 LineCharOffset = 0;
             }
 
-            public VirtualPoint(EnvDTE.TextPoint point)
+            public VirtualPoint(TextPoint point)
             {
                 Line = point.Line;
                 LineCharOffset = point.LineCharOffset;

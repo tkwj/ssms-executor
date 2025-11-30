@@ -17,34 +17,31 @@ namespace Devvcat.SSMS
 
         public static readonly Guid CommandSet = new Guid("746c2fb4-20a2-4d26-b95d-f8db97c16875");
 
-        readonly Package package;
-        readonly DTE2 dte;
+        readonly Package _package;
+        readonly DTE2 _dte;
 
         private ExecutorCommand(Package package)
         {
-            this.package = package ?? throw new ArgumentNullException(nameof(package));
-            this.dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
+            this._package = package ?? throw new ArgumentNullException(nameof(package));
+            this._dte = (DTE2)ServiceProvider.GetService(typeof(DTE));
 
             if (ServiceProvider.GetService(typeof(IMenuCommandService)) is OleMenuCommandService commandService)
             {
-                CommandID menuCommandID;
-                OleMenuCommand menuCommand;
-
                 // Create execute current statement menu item
-                menuCommandID = new CommandID(CommandSet, ExecuteStatementCommandId);
-                menuCommand = new OleMenuCommand(Command_Exec, menuCommandID);
+                var menuCommandId = new CommandID(CommandSet, ExecuteStatementCommandId);
+                var menuCommand = new OleMenuCommand(Command_Exec, menuCommandId);
                 menuCommand.BeforeQueryStatus += Command_QueryStatus;
                 commandService.AddCommand(menuCommand);
 
-                // Create execute inner satetement menu item
-                menuCommandID = new CommandID(CommandSet, ExecuteInnerStatementCommandId);
-                menuCommand = new OleMenuCommand(Command_Exec, menuCommandID);
+                // Create execute inner statement menu item
+                menuCommandId = new CommandID(CommandSet, ExecuteInnerStatementCommandId);
+                menuCommand = new OleMenuCommand(Command_Exec, menuCommandId);
                 menuCommand.BeforeQueryStatus += Command_QueryStatus;
                 commandService.AddCommand(menuCommand);
             }
         }
 
-        private IServiceProvider ServiceProvider => package;
+        private IServiceProvider ServiceProvider => _package;
 
         public static ExecutorCommand Instance
         {
@@ -74,9 +71,9 @@ namespace Devvcat.SSMS
                 menuCommand.Enabled = false;
                 menuCommand.Supported = false;
 
-                if (dte.HasActiveDocument())
+                if (_dte.HasActiveDocument())
                 {
-                    menuCommand.Enabled = dte.ActiveWindow.HWnd == dte.ActiveDocument.ActiveWindow.HWnd;
+                    menuCommand.Enabled = _dte.ActiveWindow.HWnd == _dte.ActiveDocument.ActiveWindow.HWnd;
                     menuCommand.Supported = true;
                 }
             }
@@ -86,7 +83,7 @@ namespace Devvcat.SSMS
         {
             if (sender is OleMenuCommand menuCommand)
             {
-                var executor = new Executor(dte);
+                var executor = new Executor(_dte);
                 var scope = GetScope(menuCommand.CommandID.ID);
 
                 executor.ExecuteStatement(scope);
