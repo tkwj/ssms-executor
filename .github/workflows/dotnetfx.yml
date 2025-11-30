@@ -8,7 +8,9 @@ on:
   pull_request:
     branches:
       - '*'
-
+permissions:
+  id-token: write # This is required for the federated credential to work
+  
 env:
   VERSION: 3.1.${{ github.run_number }}
   
@@ -36,11 +38,13 @@ jobs:
       run: |
         mv SSMSExecutor/bin/Release/SSMSExecutor.vsix SSMSExecutor-${{ env.VERSION }}.vsix
         
-    - name: Azure CLI login
+    - name: Azure CLI login with federated credential
       if: github.event_name != 'pull_request'
       uses: azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Install dotnet sign
       if: github.event_name != 'pull_request'
