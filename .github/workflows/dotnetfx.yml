@@ -46,6 +46,11 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+    - name: Run az commands
+      run: |
+        az account show
+        az group list
+          
     - name: Install dotnet sign
       if: github.event_name != 'pull_request'
       run: dotnet tool install --global sign --prerelease
