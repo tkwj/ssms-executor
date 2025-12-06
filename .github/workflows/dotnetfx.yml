@@ -61,6 +61,7 @@ jobs:
         --trusted-signing-account tkwj `
         --trusted-signing-certificate-profile tkwj-github `
         --trusted-signing-endpoint https://eus.codesigning.azure.net `
+        --ff filelist.txt `
         --verbosity information
 
     - name: Zip Release
@@ -68,7 +69,7 @@ jobs:
       with:
         type: 'zip'
         filename: 3.1.${{ github.run_number }}.zip
-        path: 'SSMSExecutor/bin/Release/'
+        directory: 'SSMSExecutor/bin/Release/'
         exclusions: '*.vsix'
 
     - name: Publish artifacts
