@@ -68,8 +68,9 @@ jobs:
       with:
         type: 'zip'
         filename: 3.1.${{ github.run_number }}.zip
-        directory: 'SSMSExecutor/bin/Release/'
+        path: 'SSMSExecutor/bin/Release/'
         exclusions: '*.vsix'
+        custom: '-j'
 
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
