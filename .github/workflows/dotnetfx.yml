@@ -57,11 +57,10 @@ jobs:
 
     - name: Sign VSIX packages
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
-      run: sign code trusted-signing *.vsix `
+      run: sign code trusted-signing *.vsix SSMSExecutor/bin/Release/SSMSExecutor.dll `
         --trusted-signing-account tkwj `
         --trusted-signing-certificate-profile tkwj-github `
         --trusted-signing-endpoint https://eus.codesigning.azure.net `
-        --fl filelist.txt `
         --verbosity information
 
     - name: Zip Release
