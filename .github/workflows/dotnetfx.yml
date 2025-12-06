@@ -67,7 +67,7 @@ jobs:
       uses: vimtor/action-zip@v1.2
       with:
         files: 'SSMSExecutor/bin/Release/'
-        dest: 3.1.${{ github.run_number }}.zip
+        dest: SSMSExecutor-3.1.${{ github.run_number }}.zip
 
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
