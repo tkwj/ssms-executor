@@ -1,1 +1,1 @@
-SSMSExecutor/bin/Release/SSMSExecutor.dll
+bin/Release/SSMSExecutor.dll
