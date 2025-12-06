@@ -64,13 +64,10 @@ jobs:
         --verbosity information
 
     - name: Zip Release
-      uses: TheDoctor0/zip-release@0.7.6
+      uses: vimtor/action-zip@v1.2
       with:
-        type: 'zip'
-        filename: 3.1.${{ github.run_number }}.zip
-        path: 'SSMSExecutor/bin/Release/'
-        exclusions: '*.vsix'
-        custom: '-j'
+        files: 'SSMSExecutor/bin/Release/'
+        dest: 3.1.${{ github.run_number }}.zip
 
     - name: Publish artifacts
       if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
