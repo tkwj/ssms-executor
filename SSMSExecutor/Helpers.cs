@@ -6,11 +6,16 @@ namespace Devvcat.SSMS
     {
         public static bool HasActiveDocument(this DTE2 dte)
         {
-            if (dte != null && dte.ActiveDocument != null)
+            try
             {
-                var doc = (dte.ActiveDocument.DTE)?.ActiveDocument;
-                return doc != null;
+                if (dte != null && dte.ActiveDocument != null)
+                {
+                    var doc = (dte.ActiveDocument.DTE)?.ActiveDocument;
+                    return doc != null;
+                }
             }
+            catch
+            { }
 
             return false;
         }

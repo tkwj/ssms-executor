@@ -22,6 +22,8 @@ namespace Devvcat.SSMS
 
             _document = dte.GetDocument();
 
+            if (_document == null) throw new InvalidOperationException("No active document.");
+
             SaveActiveAndAnchorPoints();
         }
 
@@ -124,7 +126,7 @@ namespace Devvcat.SSMS
 
             if (caret.Line >= ft.Line && caret.Line <= lt.Line)
             {
-                var isBeforeFirstToken = caret.Line == ft.Line && caret.LineCharOffset < ft.Column;
+                var isBeforeFirstToken = caret.Line == ft.Line && caret.LineCharOffset < ft.Column + 1;
                 var isAfterLastToken = caret.Line == lt.Line && caret.LineCharOffset > lt.Column + lt.Text.Length;
 
                 if (!(isBeforeFirstToken || isAfterLastToken))
@@ -146,13 +148,13 @@ namespace Devvcat.SSMS
                 StartPoint = new VirtualPoint
                 {
                     Line = ft.Line,
-                    LineCharOffset = ft.Column
+                    LineCharOffset = ft.Column + 1
                 },
 
                 EndPoint = new VirtualPoint
                 {
                     Line = lt.Line,
-                    LineCharOffset = lt.Column + lt.Text.Length
+                    LineCharOffset = lt.Column + lt.Text.Length + 1
                 }
             };
         }

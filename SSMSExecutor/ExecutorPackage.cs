@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio;
+﻿using Devvcat.SSMS.Options;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.Win32;
 using System;
