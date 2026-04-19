@@ -1,6 +1,6 @@
 # SSMS Executor
 
-SQL Server Management Studio (SSMS) extension for executing the current statement based on the cursor position — no need to highlight text first.
+SQL Server Management Studio (SSMS) extension for executing the current statement based on the cursor position - no need to highlight text first.
 
 ## Features
 

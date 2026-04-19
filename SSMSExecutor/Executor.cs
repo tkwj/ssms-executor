@@ -126,7 +126,7 @@ namespace Devvcat.SSMS
 
             if (caret.Line >= ft.Line && caret.Line <= lt.Line)
             {
-                var isBeforeFirstToken = caret.Line == ft.Line && caret.LineCharOffset < ft.Column + 1;
+                var isBeforeFirstToken = caret.Line == ft.Line && caret.LineCharOffset < ft.Column;
                 var isAfterLastToken = caret.Line == lt.Line && caret.LineCharOffset > lt.Column + lt.Text.Length;
 
                 if (!(isBeforeFirstToken || isAfterLastToken))
@@ -148,13 +148,13 @@ namespace Devvcat.SSMS
                 StartPoint = new VirtualPoint
                 {
                     Line = ft.Line,
-                    LineCharOffset = ft.Column + 1
+                    LineCharOffset = ft.Column
                 },
 
                 EndPoint = new VirtualPoint
                 {
                     Line = lt.Line,
-                    LineCharOffset = lt.Column + lt.Text.Length + 1
+                    LineCharOffset = lt.Column + lt.Text.Length
                 }
             };
         }
