@@ -82,7 +82,7 @@ namespace Devvcat.SSMS
         private bool ParseSqlFragments(string script, out TSqlScript sqlFragments)
         {
             IList<ParseError> errors;
-            TSql140Parser parser = new TSql140Parser(true);
+            TSql180Parser parser = new TSql180Parser(true);
 
             using (System.IO.StringReader reader = new System.IO.StringReader(script))
             {
