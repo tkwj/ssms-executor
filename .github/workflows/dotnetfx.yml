@@ -72,6 +72,13 @@ jobs:
         --artifact-signing-endpoint https://eus.codesigning.azure.net `
         --verbosity information
 
+    - name: Publish to SSMS Gallery
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      uses: madskristensen/publish-vsixgallery@v1
+      with:
+        vsix-file: SSMSExecutor-${{ env.VERSION }}.vsix
+        gallery-url: https://ssmsgallery.azurewebsites.net
+
     - name: Zip Release
       uses: vimtor/action-zip@v1.3
       with:
