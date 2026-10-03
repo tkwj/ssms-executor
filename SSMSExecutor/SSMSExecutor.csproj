@@ -87,6 +87,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.SqlServer.TransactSql.ScriptDom">
       <Version>180.6.0</Version>
@@ -124,9 +125,14 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
   <PropertyGroup>
-    <PostBuildEvent>echo. &gt; "C:\Program Files\Microsoft SQL Server Management Studio 22\Release\Common7\IDE\Extensions\extensions.configurationchanged"
-mkdir "C:\Program Files\Microsoft SQL Server Management Studio 22\Release\Common7\IDE\Extensions\SSMSExecutor"
-copy /y $(TargetDir)*.* "C:\Program Files\Microsoft SQL Server Management Studio 22\Release\Common7\IDE\Extensions\SSMSExecutor"</PostBuildEvent>
+    <PostBuildEvent>set SSMS_EXT_DIR=C:\Program Files\Microsoft SQL Server Management Studio 22\Release\Common7\IDE\Extensions
+if exist "%SSMS_EXT_DIR%" (
+  echo. &gt; "%SSMS_EXT_DIR%\extensions.configurationchanged"
+  if not exist "%SSMS_EXT_DIR%\SSMSExecutor" mkdir "%SSMS_EXT_DIR%\SSMSExecutor"
+  copy /y $(TargetDir)*.* "%SSMS_EXT_DIR%\SSMSExecutor"
+) else (
+  echo SSMS extensions folder not found at "%SSMS_EXT_DIR%". Skipping local deployment.
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

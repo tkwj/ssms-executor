@@ -10,6 +10,7 @@ namespace Devvcat.SSMS
     sealed class Executor
     {
         public readonly string CmdQueryExecute = "Query.Execute";
+        public readonly string CmdQueryParse = "Query.Parse";
 
         private readonly Document _document;
 
@@ -82,7 +83,7 @@ namespace Devvcat.SSMS
         private bool ParseSqlFragments(string script, out TSqlScript sqlFragments)
         {
             IList<ParseError> errors;
-            TSql140Parser parser = new TSql140Parser(true);
+            TSql180Parser parser = new TSql180Parser(true);
 
             using (System.IO.StringReader reader = new System.IO.StringReader(script))
             {
@@ -225,40 +226,35 @@ namespace Devvcat.SSMS
                 var script = GetDocumentText();
                 var caretPoint = GetCaretPoint();
 
-                bool success = ParseSqlFragments(script, out TSqlScript sqlScript);
-
-                if (success)
+                if (!ParseSqlFragments(script, out TSqlScript sqlScript))
                 {
-                    TextBlock currentStatement = null;
-
-                    if (sqlScript?.Batches != null)
-                        foreach (var batch in sqlScript.Batches)
-                        {
-                            currentStatement = FindCurrentStatement(batch.Statements, caretPoint, scope);
-
-                            if (currentStatement != null)
-                            {
-                                break;
-                            }
-                        }
-
-                    if (currentStatement != null)
-                    {
-                        // select the statement to be executed
-                        MakeSelection(currentStatement.StartPoint, currentStatement.EndPoint);
-
-                        // execute the statement
-                        Exec();
-
-                        // restore selection
-                        RestoreActiveAndAnchorPoints();
-                    }
+                    _document.DTE.ExecuteCommand(CmdQueryParse);
+                    return;
                 }
-                else
+
+                TextBlock currentStatement = null;
+
+                if (sqlScript?.Batches != null)
+                    foreach (var batch in sqlScript.Batches)
+                    {
+                        currentStatement = FindCurrentStatement(batch.Statements, caretPoint, scope);
+
+                        if (currentStatement != null)
+                        {
+                            break;
+                        }
+                    }
+
+                if (currentStatement != null)
                 {
-                    // there are syntax errors
-                    // execute anyway to show the errors
+                    // select the statement to be executed
+                    MakeSelection(currentStatement.StartPoint, currentStatement.EndPoint);
+
+                    // execute the statement
                     Exec();
+
+                    // restore selection
+                    RestoreActiveAndAnchorPoints();
                 }
             }
         }
