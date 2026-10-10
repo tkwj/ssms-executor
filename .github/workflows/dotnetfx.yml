@@ -8,6 +8,7 @@ on:
 
 permissions:
   id-token: write # This is required for the federated credential to work
+  contents: write
   
 env:
   VERSION: 3.1.${{ github.run_number }}
@@ -17,18 +18,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v3
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v3
+      uses: NuGet/setup-nuget@v4
 
     - name: Restore Packages
       run: nuget restore SSMSExecutor.sln
 
-    - name: Patch AssemblyInfo.cs
+    - name: Update package and assembly versions
       run: |
         $file = "SSMSExecutor\Properties\AssemblyInfo.cs"
         $version = "${{ env.VERSION }}"
@@ -37,6 +38,11 @@ jobs:
           -replace '(?<=AssemblyFileVersion\(")[^"]*(?="\))', $version `
           -replace '(?<=AssemblyInformationalVersion\(")[^"]*(?="\))', $version |
         Set-Content $file
+
+        $manifest = "SSMSExecutor\source.extension.vsixmanifest"
+        (Get-Content $manifest -Raw) `
+          -replace '(<Identity\b[^>]*\bVersion=")[^"]*(")', "`${1}$version`${2}" |
+        Set-Content $manifest
       shell: pwsh
 
     - name: Build Solution
@@ -48,20 +54,15 @@ jobs:
         mv SSMSExecutor/bin/Release/SSMSExecutor.vsix SSMSExecutor-${{ env.VERSION }}.vsix
         
     - name: Azure CLI login with federated credential
-      if: github.event_name != 'pull_request'
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       uses: azure/login@v3
       with:
         client-id: ${{ secrets.AZURE_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Run az commands
-      run: |
-        az account show
-        az group list
-          
     - name: Install dotnet sign
-      if: github.event_name != 'pull_request'
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       run: dotnet tool install --global sign --prerelease
 
     - name: Sign VSIX packages
@@ -72,14 +73,8 @@ jobs:
         --artifact-signing-endpoint https://eus.codesigning.azure.net `
         --verbosity information
 
-    - name: Publish to SSMS Gallery
-      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
-      uses: madskristensen/publish-vsixgallery@v1
-      with:
-        vsix-file: SSMSExecutor-${{ env.VERSION }}.vsix
-        gallery-url: https://ssmsgallery.azurewebsites.net
-
     - name: Zip Release
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
       uses: vimtor/action-zip@v1.3
       with:
         files: 'SSMSExecutor/bin/Release/'
@@ -93,3 +88,22 @@ jobs:
         path: |
           *.vsix
           *.zip
+
+    - name: Create draft GitHub release
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' ||  github.event_name == 'workflow_dispatch')
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: >-
+        gh release create "v${{ env.VERSION }}"
+        "SSMSExecutor-${{ env.VERSION }}.vsix"
+        "SSMSExecutor-${{ env.VERSION }}.zip"
+        --draft
+        --title "SSMS Executor v${{ env.VERSION }}"
+        --generate-notes
+
+    - name: Publish to SSMS Gallery
+      if: github.ref == 'refs/heads/master' && github.repository_owner == 'tkwj' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+      uses: madskristensen/publish-vsixgallery@v1
+      with:
+        vsix-file: SSMSExecutor-${{ env.VERSION }}.vsix
+        gallery-url: https://ssmsgallery.azurewebsites.net
